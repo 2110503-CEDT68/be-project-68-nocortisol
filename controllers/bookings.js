@@ -145,13 +145,10 @@ exports.updateBooking = async (req, res, next) => {
 			});
 		}
 
-		if (
-			booking.user.toString() !== req.user.id &&
-			req.user.role !== "admin"
-		) {
+		if (!isOwnerOrAdmin(booking, req.user)) {
 			return res.status(401).json({
 				success: false,
-				msg: "Not authorized to update this booking",
+				msg: `Not authorized to update this booking with id of ${req.params.id}`,
 			});
 		}
 
@@ -192,13 +189,10 @@ exports.deleteBooking = async (req, res, next) => {
 			});
 		}
 
-		if (
-			booking.user.toString() !== req.user.id &&
-			req.user.role !== "admin"
-		) {
+		if (!isOwnerOrAdmin(booking, req.user)) {
 			return res.status(401).json({
 				success: false,
-				msg: "Not authorized to delete this booking",
+				msg: `Not authorized to delete this booking with id of ${req.params.id}`,
 			});
 		}
 
