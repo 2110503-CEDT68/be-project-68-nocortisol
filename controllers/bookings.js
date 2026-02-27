@@ -99,8 +99,8 @@ exports.addBooking = async (req, res, next) => {
 
 		req.body.user = req.user.id;
 
-		// date constraint (use `date` field consistently)
-		if (!isValidBookingDate(new Date(req.body.date))) {
+		// date constraint (use `bookingDate` field consistently)
+		if (!isValidBookingDate(new Date(req.body.bookingDate))) {
 			return res.status(400).json({ success: false, msg: "Booking date must be between May 10-13, 2022" });
 		}
 
@@ -151,8 +151,8 @@ exports.updateBooking = async (req, res, next) => {
 		}
 
 		// validate date if being updated
-		if (req.body.date) {
-			const newDate = new Date(req.body.date);
+		if (req.body.bookingDate) {
+			const newDate = new Date(req.body.bookingDate);
 			if (!isValidBookingDate(newDate)) {
 				return res.status(400).json({
 					success: false,
