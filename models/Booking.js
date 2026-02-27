@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const Company = require("./Company");
 
 const BookingSchema = new mongoose.Schema({
 	apptDate: {
@@ -10,7 +11,7 @@ const BookingSchema = new mongoose.Schema({
 		ref: "User",
 		required: true,
 	},
-	hospital: {
+	company: {
 		type: mongoose.Schema.Types.ObjectId,
 		ref: "Company",
 		required: true,
