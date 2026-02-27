@@ -9,3 +9,6 @@ test_case*.json
 
 # ignore UML folder
 UML/
+
+# macOS
+.DS_Store
