@@ -18,23 +18,18 @@ const isOwnerOrAdmin = (booking, user) =>
 //@access   Private
 exports.getBookings = async (req, res, next) => {
 	let query;
+	const companyPopulate = { path: "company", select: "name address telephone" };
 
 	if (req.user.role !== "admin") {
-		query = Booking.find({ user: req.user.id }).populate({
-			path: "company",
-			select: "name address telephone",
-		});
-	} else {
+		query = Booking.find({ user: req.user.id }).populate(companyPopulate);
+	} 
+	else {
 		if (req.params.companyId) {
-			query = Booking.find({ company: req.params.companyId }).populate({
-				path: "company",
-				select: "name address telephone",
-			});
-		} else {
-			query = Booking.find().populate({
-				path: "company",
-				select: "name address telephone",
-			});
+			query = Booking.find({ company: req.params.companyId }).populate(companyPopulate);
+		} 
+		else 
+		{
+			query = Booking.find().populate(companyPopulate);
 		}
 	}
 
