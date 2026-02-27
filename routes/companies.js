@@ -6,7 +6,7 @@ const {
 	updateCompany,
 	deleteCompany,
 } = require("../controllers/companies");
-const bookingRouter = require("./booking");
+const bookingRouter = require("./bookings");
 const { protect, authorize } = require("../middleware/auth");
 
 const router = express.Router();
