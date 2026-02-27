@@ -80,7 +80,8 @@ exports.getCompanies = async (req, res, next) => {
 			data: companies,
 		});
 	} catch (err) {
-		res.status(500).json({ success: false, msg: "Cannot find Company" });
+		console.log(err.stack);
+		res.status(500).json({ success: false, msg: "Cannot find Companies" });
 	}
 };
 
@@ -100,6 +101,7 @@ exports.getCompany = async (req, res) => {
 
 		res.status(200).json({ success: true, data: company });
 	} catch (err) {
+		console.log(err.stack);
 		res.status(500).json({ success: false, msg: "Cannot find Company" });
 	}
 };
@@ -112,6 +114,7 @@ exports.createCompany = async (req, res) => {
 		const company = await Company.create(req.body);
 		res.status(201).json({ success: true, data: company });
 	} catch (err) {
+		console.log(err.stack);
 		res.status(500).json({ success: false, msg: "Cannot create Company" });
 	}
 };
@@ -135,6 +138,7 @@ exports.updateCompany = async (req, res) => {
 
 		return res.status(200).json({ success: true, data: company });
 	} catch (err) {
+		console.log(err.stack);
 		res.status(500).json({ success: false, msg: "Cannot update Company" });
 	}
 };
@@ -160,6 +164,7 @@ exports.deleteCompany = async (req, res) => {
 
 		res.status(200).json({ success: true, data: {} });
 	} catch (err) {
+		console.log(err.stack);
 		res.status(500).json({ success: false, msg: "Cannot delete Company" });
 	}
 };
