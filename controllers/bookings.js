@@ -81,8 +81,6 @@ exports.getBooking = async (req, res, next) => {
 //@access   Private
 exports.addBooking = async (req, res, next) => {
 	try {
-		req.body.company = req.params.companyId;
-
 		const company = await Company.findById(req.params.companyId);
 
 		if (!company) {
@@ -92,18 +90,15 @@ exports.addBooking = async (req, res, next) => {
 			});
 		}
 
-		req.body.user = req.user.id;
-
-		// date constraint (use `bookingDate` field consistently)
 		if (!isValidBookingDate(new Date(req.body.bookingDate))) {
-			return res.status(400).json({ success: false, msg: "Booking date must be between May 10-13, 2022" });
+			return res.status(400).json({
+				success: false,
+				msg: "Booking date must be between May 10-13, 2022",
+			});
 		}
 
-		// max 3 bookings (non-admin)
 		if (req.user.role !== "admin") {
-			const count = await Booking.countDocuments({
-				user: req.user.id,
-			});
+			const count = await Booking.countDocuments({ user: req.user.id });
 
 			if (count >= 3) {
 				return res.status(400).json({
@@ -113,16 +108,18 @@ exports.addBooking = async (req, res, next) => {
 			}
 		}
 
-		const booking = await Booking.create(req.body);
-
-		res.status(201).json({
-			success: true,
-			data: booking,
+		const booking = await Booking.create({
+			...req.body,
+			company: req.params.companyId,
+			user: req.user.id,
 		});
+
+		res.status(201).json({ success: true, data: booking });
 	} catch (err) {
 		res.status(500).json({ success: false, msg: "Cannot create Booking" });
 	}
 };
+
 
 //@desc     Update booking
 //@route    PUT /api/v1/bookings/:id
