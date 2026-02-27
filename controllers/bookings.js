@@ -170,7 +170,7 @@ exports.updateBooking = async (req, res, next) => {
 //@access   Private
 exports.deleteBooking = async (req, res, next) => {
 	try {
-		let booking = await Booking.findById(req.params.id);
+		const booking = await Booking.findById(req.params.id);
 
 		if (!booking) {
 			return res.status(404).json({
