@@ -1,0 +1,20 @@
+@startuml Manage Company (POST)
+title "Manage Company (POST)"
+
+participant "Client" as client
+participant "<<javaScript>>\n:server" as server
+participant "<<router>>\n:companies" as routerCompanies
+participant "<<controllers>>\n:companies" as controllersCompanies
+participant "<<model>>\n:Company" as modelCompany
+database "<<MongoDB>>\n:companies" as CompaniesDatabase
+
+client->server ++:req.post('/api/v1/companies')
+server->routerCompanies ++:app.use('/api/v1/companies',companies)
+routerCompanies -> controllersCompanies ++:createCompany()
+controllersCompanies->modelCompany ++:create(req.body)
+modelCompany ->CompaniesDatabase ++: CompanySchema
+CompaniesDatabase --> modelCompany --: company
+controllersCompanies <-- modelCompany --: company
+controllersCompanies->client --:response
+
+@enduml

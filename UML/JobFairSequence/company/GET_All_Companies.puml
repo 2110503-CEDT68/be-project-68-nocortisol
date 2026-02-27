@@ -1,0 +1,20 @@
+@startuml Manage Companies (GET ALL)
+title "Manage Companies (GET ALL)"
+
+participant "Client" as client
+participant "<<javaScript>>\n:server" as server
+participant "<<router>>\n:companies" as routerCompanies
+participant "<<controllers>>\n:companies" as controllersCompanies
+participant "<<model>>\n:Company" as modelCompany
+database "<<MongoDB>>\n:companies" as CompaniesDatabase
+
+client->server ++:req.get('/api/v1/companies')
+server->routerCompanies ++:app.use('/api/v1/companies',companies)
+routerCompanies -> controllersCompanies ++:getCompanies()
+controllersCompanies->modelCompany ++:find()
+modelCompany ->CompaniesDatabase ++: CompanySchema
+CompaniesDatabase --> modelCompany --: companies
+controllersCompanies <-- modelCompany --: companies
+controllersCompanies->client --:response
+
+@enduml

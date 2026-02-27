@@ -1,0 +1,20 @@
+@startuml Online JobFair System Use Case Diagram
+left to right direction
+actor "User" as user
+rectangle "Online JobFair System" as VacQSystem {    
+    usecase "Register" as register
+    usecase "View\nCompanies" as viewCompanies
+    usecase "Manage\nBooking" as manageBooking
+    usecase "Manage\nCompanies" as manageCompanies
+}
+
+user -- register
+user -- viewCompanies
+user -- manageBooking
+
+actor "Admin" as admin
+register -- admin
+manageCompanies -- admin
+manageBooking -- admin
+
+@enduml

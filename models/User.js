@@ -9,12 +9,17 @@ const UserSchema = new mongoose.Schema({
 	},
 	email: {
 		type: String,
-		require: [true, "Please add an email"],
+		required: [true, "Please add an email"],
 		unique: true,
 		match: [
 			/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
 			"Please add a valid email",
 		],
+	},
+	phone: {
+  		type: String,
+ 	 	required: [true, "Please add a phone number"], // ถ้าอยากบังคับให้มี
+ 	 	match: [/^0\d{8,9}$/, "Please add a valid phone number"], // ตัวอย่าง regex เบอร์ไทย 9-10 หลักขึ้นต้น 0
 	},
 	role: {
 		type: String,

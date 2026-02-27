@@ -1,0 +1,22 @@
+@startuml Bookings For Company (GET)
+title "Bookings For Company (GET)"
+
+participant "Client" as client
+participant "<<javaScript>>\n:server" as server
+participant "<<router>>\n:companies" as routerCompanies
+participant "<<router>>\n:bookings" as routerBookings
+participant "<<controllers>>\n:bookings" as controllersBookings
+participant "<<model>>\n:Booking" as modelBooking
+database "<<MongoDB>>\n:bookings" as BookingsDatabase
+
+client->server ++:req.get('/api/v1/companies/:companyId/bookings')
+server->routerCompanies ++:app.use('/api/v1/companies',companies)
+routerCompanies -> routerBookings ++:use('/:companyId/bookings',bookingRouter)
+routerBookings -> controllersBookings ++:getBookings()
+controllersBookings->modelBooking ++:find({company:req.params.companyId})
+modelBooking ->BookingsDatabase ++: BookingSchema
+BookingsDatabase --> modelBooking --: bookings
+controllersBookings <-- modelBooking --: bookings
+controllersBookings->client --:response
+
+@enduml
