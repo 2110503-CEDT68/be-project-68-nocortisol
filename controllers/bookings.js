@@ -5,6 +5,14 @@ const Company = require("../models/Company");
 const START_DATE = new Date("2022-05-10");
 const END_DATE = new Date("2022-05-13");
 
+// add const to cleaner code
+const isValidBookingDate = (date) => date >= START_DATE && date <= END_DATE;
+
+const isOwnerOrAdmin = (booking, user) =>
+	booking.user.toString() === user.id || user.role === "admin";
+
+
+
 //@desc     Get all bookings
 //@route    GET /api/v1/bookings
 //@access   Private
@@ -60,13 +68,10 @@ exports.getBooking = async (req, res, next) => {
 		}
 
 		// ownership check
-		if (
-			booking.user.toString() !== req.user.id &&
-			req.user.role !== "admin"
-		) {
+		if(!isOwnerOrAdmin(booking, req.user)) {
 			return res.status(401).json({
 				success: false,
-				msg: "Not authorized to access this booking",
+				msg: `Not authorized to view this booking with id of ${req.params.id}`,
 			});
 		}
 
@@ -97,11 +102,8 @@ exports.addBooking = async (req, res, next) => {
 		const bookingDate = new Date(req.body.date);
 
 		// date constraint
-		if (bookingDate < START_DATE || bookingDate > END_DATE) {
-			return res.status(400).json({
-				success: false,
-				msg: "Booking date must be between May 10-13, 2022",
-			});
+		if (!isValidBookingDate(new Date(req.body.date))) {
+			return res.status(400).json({ success: false, msg: "Booking date must be between May 10-13, 2022" });
 		}
 
 		// max 3 bookings (non-admin)
@@ -143,13 +145,10 @@ exports.updateBooking = async (req, res, next) => {
 			});
 		}
 
-		if (
-			booking.user.toString() !== req.user.id &&
-			req.user.role !== "admin"
-		) {
+		if (!isOwnerOrAdmin(booking, req.user)) {
 			return res.status(401).json({
 				success: false,
-				msg: "Not authorized to update this booking",
+				msg: `Not authorized to update this booking with id of ${req.params.id}`,
 			});
 		}
 
@@ -190,13 +189,10 @@ exports.deleteBooking = async (req, res, next) => {
 			});
 		}
 
-		if (
-			booking.user.toString() !== req.user.id &&
-			req.user.role !== "admin"
-		) {
+		if (!isOwnerOrAdmin(booking, req.user)) {
 			return res.status(401).json({
 				success: false,
-				msg: "Not authorized to delete this booking",
+				msg: `Not authorized to delete this booking with id of ${req.params.id}`,
 			});
 		}
 
