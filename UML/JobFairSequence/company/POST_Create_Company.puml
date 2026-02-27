@@ -1,4 +1,5 @@
 @startuml Manage Company (POST)
+
 title "Manage Company (POST)"
 
 participant "Client" as client

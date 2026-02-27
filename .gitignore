@@ -6,3 +6,6 @@ config/config.env
 
 # ignore test case file
 test_case*.json
+
+# ignore UML folder
+UML/

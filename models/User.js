@@ -18,8 +18,8 @@ const UserSchema = new mongoose.Schema({
 	},
 	phone: {
   		type: String,
- 	 	required: [true, "Please add a phone number"], // ถ้าอยากบังคับให้มี
- 	 	match: [/^0\d{8,9}$/, "Please add a valid phone number"], // ตัวอย่าง regex เบอร์ไทย 9-10 หลักขึ้นต้น 0
+ 	 	required: [true, "Please add a phone number"], 
+ 	 	match: [/^0\d{8,9}$/, "Please add a valid phone number"], 
 	},
 	role: {
 		type: String,
