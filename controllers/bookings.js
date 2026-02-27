@@ -5,11 +5,11 @@ const Company = require("../models/Company");
 const START_DATE = new Date("2022-05-10");
 const END_DATE = new Date("2022-05-13");
 
-// add const to cleaner code
+// add const for cleaner code
 const isValidBookingDate = (date) => date >= START_DATE && date <= END_DATE;
 
 const isOwnerOrAdmin = (booking, user) =>
-	booking.user.toString() === user.id || user.role === "admin";
+	booking && booking.user && (booking.user.toString() === user.id || user.role === "admin");
 
 
 
@@ -99,9 +99,7 @@ exports.addBooking = async (req, res, next) => {
 
 		req.body.user = req.user.id;
 
-		const bookingDate = new Date(req.body.date);
-
-		// date constraint
+		// date constraint (use `date` field consistently)
 		if (!isValidBookingDate(new Date(req.body.date))) {
 			return res.status(400).json({ success: false, msg: "Booking date must be between May 10-13, 2022" });
 		}
@@ -122,7 +120,7 @@ exports.addBooking = async (req, res, next) => {
 
 		const booking = await Booking.create(req.body);
 
-		res.status(200).json({
+		res.status(201).json({
 			success: true,
 			data: booking,
 		});
@@ -155,7 +153,7 @@ exports.updateBooking = async (req, res, next) => {
 		// validate date if being updated
 		if (req.body.date) {
 			const newDate = new Date(req.body.date);
-			if (newDate < START_DATE || newDate > END_DATE) {
+			if (!isValidBookingDate(newDate)) {
 				return res.status(400).json({
 					success: false,
 					msg: "Booking date must be between May 10-13, 2022",
@@ -192,7 +190,7 @@ exports.deleteBooking = async (req, res, next) => {
 		if (!isOwnerOrAdmin(booking, req.user)) {
 			return res.status(401).json({
 				success: false,
-				msg: `Not authorized to delete this booking with id of ${req.params.id}`,
+				msg: "Not authorized to delete this booking",
 			});
 		}
 

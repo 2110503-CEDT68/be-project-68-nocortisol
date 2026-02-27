@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const Company = require("./Company");
 
 const BookingSchema = new mongoose.Schema({
-	apptDate: {
+	bookingDate: {
 		type: Date,
 		required: true,
 	},
