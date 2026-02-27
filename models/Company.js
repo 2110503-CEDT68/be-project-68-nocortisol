@@ -26,6 +26,10 @@ const CompanySchema = new mongoose.Schema(
 			maxlength: [5, "Postal code must be 5 digits"],
 			minlength: [5, "Postal code must be 5 digits"],
 		},
+		tel: {
+			type: String,
+			required: [true, "Please add a telephone number"],
+		},
 		website: {
 			type: String,
 			required: [true, "Please add a website"],
@@ -37,10 +41,6 @@ const CompanySchema = new mongoose.Schema(
 		description: {
 			type: String,
 			required: [true, "Please add a description"],
-		},
-		tel: {
-			type: String,
-			required: [true, "Please add a telephone number"],
 		},
 	},
 	{
