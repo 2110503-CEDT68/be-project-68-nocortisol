@@ -5,11 +5,11 @@ const Company = require("../models/Company");
 const START_DATE = new Date("2022-05-10");
 const END_DATE = new Date("2022-05-13");
 
-// add const to cleaner code
+// add const for cleaner code
 const isValidBookingDate = (date) => date >= START_DATE && date <= END_DATE;
 
 const isOwnerOrAdmin = (booking, user) =>
-	booking.user.toString() === user.id || user.role === "admin";
+	booking && booking.user && (booking.user.toString() === user.id || user.role === "admin");
 
 
 
@@ -18,23 +18,18 @@ const isOwnerOrAdmin = (booking, user) =>
 //@access   Private
 exports.getBookings = async (req, res, next) => {
 	let query;
+	const companyPopulate = { path: "company", select: "name address telephone" };
 
 	if (req.user.role !== "admin") {
-		query = Booking.find({ user: req.user.id }).populate({
-			path: "company",
-			select: "name address telephone",
-		});
-	} else {
+		query = Booking.find({ user: req.user.id }).populate(companyPopulate);
+	} 
+	else {
 		if (req.params.companyId) {
-			query = Booking.find({ company: req.params.companyId }).populate({
-				path: "company",
-				select: "name address telephone",
-			});
-		} else {
-			query = Booking.find().populate({
-				path: "company",
-				select: "name address telephone",
-			});
+			query = Booking.find({ company: req.params.companyId }).populate(companyPopulate);
+		} 
+		else 
+		{
+			query = Booking.find().populate(companyPopulate);
 		}
 	}
 
@@ -86,8 +81,6 @@ exports.getBooking = async (req, res, next) => {
 //@access   Private
 exports.addBooking = async (req, res, next) => {
 	try {
-		req.body.company = req.params.companyId;
-
 		const company = await Company.findById(req.params.companyId);
 
 		if (!company) {
@@ -97,20 +90,15 @@ exports.addBooking = async (req, res, next) => {
 			});
 		}
 
-		req.body.user = req.user.id;
-
-		const bookingDate = new Date(req.body.date);
-
-		// date constraint
-		if (!isValidBookingDate(new Date(req.body.date))) {
-			return res.status(400).json({ success: false, msg: "Booking date must be between May 10-13, 2022" });
+		if (!isValidBookingDate(new Date(req.body.bookingDate))) {
+			return res.status(400).json({
+				success: false,
+				msg: "Booking date must be between May 10-13, 2022",
+			});
 		}
 
-		// max 3 bookings (non-admin)
 		if (req.user.role !== "admin") {
-			const count = await Booking.countDocuments({
-				user: req.user.id,
-			});
+			const count = await Booking.countDocuments({ user: req.user.id });
 
 			if (count >= 3) {
 				return res.status(400).json({
@@ -120,16 +108,18 @@ exports.addBooking = async (req, res, next) => {
 			}
 		}
 
-		const booking = await Booking.create(req.body);
-
-		res.status(200).json({
-			success: true,
-			data: booking,
+		const booking = await Booking.create({
+			...req.body,
+			company: req.params.companyId,
+			user: req.user.id,
 		});
+
+		res.status(201).json({ success: true, data: booking });
 	} catch (err) {
 		res.status(500).json({ success: false, msg: "Cannot create Booking" });
 	}
 };
+
 
 //@desc     Update booking
 //@route    PUT /api/v1/bookings/:id
@@ -153,9 +143,9 @@ exports.updateBooking = async (req, res, next) => {
 		}
 
 		// validate date if being updated
-		if (req.body.date) {
-			const newDate = new Date(req.body.date);
-			if (newDate < START_DATE || newDate > END_DATE) {
+		if (req.body.bookingDate) {
+			const newDate = new Date(req.body.bookingDate);
+			if (!isValidBookingDate(newDate)) {
 				return res.status(400).json({
 					success: false,
 					msg: "Booking date must be between May 10-13, 2022",
@@ -180,7 +170,7 @@ exports.updateBooking = async (req, res, next) => {
 //@access   Private
 exports.deleteBooking = async (req, res, next) => {
 	try {
-		let booking = await Booking.findById(req.params.id);
+		const booking = await Booking.findById(req.params.id);
 
 		if (!booking) {
 			return res.status(404).json({
@@ -192,7 +182,7 @@ exports.deleteBooking = async (req, res, next) => {
 		if (!isOwnerOrAdmin(booking, req.user)) {
 			return res.status(401).json({
 				success: false,
-				msg: `Not authorized to delete this booking with id of ${req.params.id}`,
+				msg: "Not authorized to delete this booking",
 			});
 		}
 
