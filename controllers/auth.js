@@ -27,7 +27,7 @@ const sendTokenResponse = (user, statusCode, res) => {
 //@access	Public
 exports.register = async (req, res) => {
 	try {
-		const { name, email, password,tel, role } = req.body;
+		const { name, email, password, tel, role } = req.body;
 
 		// Create user to the database
 		const user = await User.create({
@@ -38,10 +38,11 @@ exports.register = async (req, res) => {
 			role,
 		});
 
-		sendTokenResponse(user, 200, res);
+		sendTokenResponse(user, 201, res);
 	} catch (err) {
-		console.log(err.stack);
-		res.status(400).json({ success: false });
+		if (err.name === "ValidationError")
+			return res.status(400).json({ success: false, msg: err.message });
+		res.status(500).json({ success: false });
 	}
 };
 

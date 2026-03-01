@@ -7,11 +7,10 @@ const END_DATE = new Date("2022-05-13");
 
 // add const for cleaner code
 const isValidBookingDate = (date) => date >= START_DATE && date <= END_DATE;
-
 const isOwnerOrAdmin = (booking, user) =>
-	booking && booking.user && (booking.user.toString() === user.id || user.role === "admin");
-
-
+	booking &&
+	booking.user &&
+	(booking.user.toString() === user.id || user.role === "admin");
 
 //@desc     Get all bookings
 //@route    GET /api/v1/bookings
@@ -22,13 +21,12 @@ exports.getBookings = async (req, res, next) => {
 
 	if (req.user.role !== "admin") {
 		query = Booking.find({ user: req.user.id }).populate(companyPopulate);
-	} 
-	else {
+	} else {
 		if (req.params.companyId) {
-			query = Booking.find({ company: req.params.companyId }).populate(companyPopulate);
-		} 
-		else 
-		{
+			query = Booking.find({ company: req.params.companyId }).populate(
+				companyPopulate,
+			);
+		} else {
 			query = Booking.find().populate(companyPopulate);
 		}
 	}
@@ -41,6 +39,10 @@ exports.getBookings = async (req, res, next) => {
 			data: bookings,
 		});
 	} catch (err) {
+		if (err.name === "CastError")
+			return res
+				.status(400)
+				.json({ success: false, msg: "Invalid Company ID" });
 		res.status(500).json({ success: false, msg: "Cannot find Booking" });
 	}
 };
@@ -63,7 +65,7 @@ exports.getBooking = async (req, res, next) => {
 		}
 
 		// ownership check
-		if(!isOwnerOrAdmin(booking, req.user)) {
+		if (!isOwnerOrAdmin(booking, req.user)) {
 			return res.status(401).json({
 				success: false,
 				msg: `Not authorized to view this booking with id of ${req.params.id}`,
@@ -116,10 +118,11 @@ exports.addBooking = async (req, res, next) => {
 
 		res.status(201).json({ success: true, data: booking });
 	} catch (err) {
+		if (err.name === "ValidationError")
+			return res.status(400).json({ success: false, msg: err.message });
 		res.status(500).json({ success: false, msg: "Cannot create Booking" });
 	}
 };
-
 
 //@desc     Update booking
 //@route    PUT /api/v1/bookings/:id
@@ -153,14 +156,19 @@ exports.updateBooking = async (req, res, next) => {
 			}
 		}
 
-		booking = await Booking.findByIdAndUpdate(
-			req.params.id,
-			req.body,
-			{ new: true, runValidators: true }
-		);
+		booking = await Booking.findByIdAndUpdate(req.params.id, req.body, {
+			new: true,
+			runValidators: true,
+		});
 
 		res.status(200).json({ success: true, data: booking });
 	} catch (err) {
+		if (err.name === "ValidationError")
+			return res.status(400).json({ success: false, msg: err.message });
+		if (err.name === "CastError")
+			return res
+				.status(400)
+				.json({ success: false, msg: "Invalid Company ID" });
 		res.status(500).json({ success: false, msg: "Cannot update Booking" });
 	}
 };
