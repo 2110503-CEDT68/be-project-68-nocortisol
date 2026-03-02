@@ -66,7 +66,7 @@ exports.getBooking = async (req, res, next) => {
 
 		// ownership check
 		if (!isOwnerOrAdmin(booking, req.user)) {
-			return res.status(401).json({
+			return res.status(403).json({
 				success: false,
 				msg: `Not authorized to view this booking with id of ${req.params.id}`,
 			});
@@ -139,7 +139,7 @@ exports.updateBooking = async (req, res, next) => {
 		}
 
 		if (!isOwnerOrAdmin(booking, req.user)) {
-			return res.status(401).json({
+			return res.status(403).json({
 				success: false,
 				msg: `Not authorized to update this booking with id of ${req.params.id}`,
 			});
@@ -188,9 +188,9 @@ exports.deleteBooking = async (req, res, next) => {
 		}
 
 		if (!isOwnerOrAdmin(booking, req.user)) {
-			return res.status(401).json({
+			return res.status(403).json({
 				success: false,
-				msg: "Not authorized to delete this booking",
+				msg: `Not authorized to delete this booking with id of ${req.params.id}`,
 			});
 		}
 
