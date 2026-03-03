@@ -1,0 +1,12 @@
+name,email,tel,role,password
+Alice Nakamura,alice.nakamura@example.com,0812345678,user,password123
+Bob Tanaka,bob.tanaka@example.com,0823456789,user,password123
+Carol Srisawat,carol.srisawat@example.com,0834567890,user,password123
+David Wongphan,david.wongphan@example.com,0845678901,user,password123
+Emma Pattanasak,emma.pattanasak@example.com,0856789012,user,password123
+Frank Charoensuk,frank.charoensuk@example.com,0867890123,user,password123
+Grace Limtrakul,grace.limtrakul@example.com,0878901234,user,password123
+Henry Buranasiri,henry.buranasiri@example.com,0889012345,user,password123
+Iris Rattanaphong,iris.rattanaphong@example.com,0890123456,user,password123
+James Meecharoen,james.meecharoen@example.com,0801234567,user,password123
+Admin User,admin@nocortisol.co.th,0811111111,admin,adminpass123
